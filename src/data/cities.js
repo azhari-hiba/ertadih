@@ -12,7 +12,7 @@ export const cities = [
   { id: 11, name_ar: 'تيط مليل', price: 30 },
   { id: 12, name_ar: 'الدروة', price: 30 },
   { id: 13, name_ar: 'بوسكورة', price: 30 },
-  { id: 14, name_ar: 'باقي المدن', price: 35 },
+  { id: 14, name_ar: 'مدينة أخرى', price: 35 },
 ]
 
 export const categories = [

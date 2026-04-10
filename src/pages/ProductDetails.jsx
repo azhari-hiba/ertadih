@@ -6,8 +6,10 @@ import Loader from '../components/Loader'
 import EmptyState from '../components/EmptyState'
 import { useCart } from '../context/CartContext'
 import { categoryLabel, formatPrice } from '../utils/format'
-import {toast} from'../utils/alerts'
+import { toast } from '../utils/alerts'
 import { errorAlert } from '../utils/alerts'
+import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi2'
+
 export default function ProductDetails() {
   const { productId } = useParams()
   const [product, setProduct] = useState(null)
@@ -80,7 +82,7 @@ export default function ProductDetails() {
       addToCart({
         ...product,
         imageUrl: currentVariant.imageUrl,
-        color: currentVariant.color || '',
+        // حيدنا اللون من هنا باش ما يمشيش للسلة كاسم
         size: selectedSize || '',
         variantIndex: currentIndex,
       })
@@ -89,7 +91,7 @@ export default function ProductDetails() {
     }
 
     addToCart(product)
-toast("تمت إضافة المنتج للسلة 🛍️")
+    toast("تمت إضافة المنتج للسلة 🛍️")
   }
 
   if (loading) return <Loader />
@@ -114,48 +116,75 @@ toast("تمت إضافة المنتج للسلة 🛍️")
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '12px',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                background: '#f9f9f9'
               }}
             >
               <button
                 type="button"
                 onClick={handlePrev}
-                className="slider-arrow"
                 style={{
-                  width: '44px',
-                  height: '44px',
+                  position: 'absolute',
+                  right: '10px',
+                  zIndex: 2,
+                  width: '38px',
+                  height: '38px',
                   borderRadius: '50%',
                   border: 'none',
                   cursor: 'pointer',
-                  fontSize: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(255, 255, 255, 0.8)',
+                  backdropFilter: 'blur(4px)',
+                  color: '#7a5c46',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  fontSize: '20px'
                 }}
               >
-                ‹
+                <HiOutlineChevronRight />
               </button>
 
               <img
                 src={currentVariant?.imageUrl}
                 alt={product.name}
                 className="details-image"
+                style={{
+                    width: '100%',
+                    height: 'auto',
+                    objectFit: 'cover',
+                    display: 'block'
+                }}
               />
 
               <button
                 type="button"
                 onClick={handleNext}
-                className="slider-arrow"
                 style={{
-                  width: '44px',
-                  height: '44px',
+                  position: 'absolute',
+                  left: '10px',
+                  zIndex: 2,
+                  width: '38px',
+                  height: '38px',
                   borderRadius: '50%',
                   border: 'none',
                   cursor: 'pointer',
-                  fontSize: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(255, 255, 255, 0.8)',
+                  backdropFilter: 'blur(4px)',
+                  color: '#7a5c46',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  fontSize: '20px'
                 }}
               >
-                ›
+                <HiOutlineChevronLeft />
               </button>
             </div>
 
+            {/* عرض الصور الصغيرة للألوان فقط بدون كتابة الاسم */}
             <div
               className="variant-thumbs"
               style={{
@@ -172,29 +201,26 @@ toast("تمت إضافة المنتج للسلة 🛍️")
                   type="button"
                   onClick={() => setCurrentIndex(index)}
                   style={{
-                    minWidth: '72px',
-                    border: index === currentIndex ? '2px solid #7a5c46' : '1px solid #ddd',
-                    borderRadius: '14px',
+                    minWidth: '70px',
+                    border: index === currentIndex ? '2px solid #7a5c46' : '1px solid #eee',
+                    borderRadius: '12px',
                     background: '#fff',
-                    padding: '6px',
+                    padding: '4px',
                     cursor: 'pointer',
+                    transition: '0.2s'
                   }}
                 >
                   <img
                     src={variant.imageUrl}
-                    alt={variant.color || `variant-${index}`}
+                    alt={`variant-${index}`}
                     style={{
-                      width: '56px',
-                      height: '56px',
+                      width: '60px',
+                      height: '60px',
                       objectFit: 'cover',
-                      borderRadius: '10px',
+                      borderRadius: '8px',
                       display: 'block',
-                      margin: '0 auto 6px',
                     }}
                   />
-                  <span style={{ fontSize: '12px' }}>
-                    {variant.color || `لون ${index + 1}`}
-                  </span>
                 </button>
               ))}
             </div>
@@ -212,31 +238,11 @@ toast("تمت إضافة المنتج للسلة 🛍️")
 
         {usesVariants && currentVariant && (
           <>
-            <div style={{ marginTop: '18px' }}>
-              <h4 style={{ marginBottom: '10px' }}>اختيار اللون</h4>
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                {variants.map((variant, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    onClick={() => setCurrentIndex(index)}
-                    style={{
-                      padding: '10px 16px',
-                      borderRadius: '999px',
-                      border: index === currentIndex ? '2px solid #7a5c46' : '1px solid #ddd',
-                      background: index === currentIndex ? '#f3ebe5' : '#fff',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {variant.color || `لون ${index + 1}`}
-                  </button>
-                ))}
-              </div>
-            </div>
-
+            {/* حيدنا قسم "اختيار اللون" اللي كان كيعرض أزرار فيها نص، دابا الصور الصغيرة الفوق كافية */}
+            
             {Array.isArray(currentVariant.sizes) && currentVariant.sizes.length > 0 && (
-              <div style={{ marginTop: '18px' }}>
-                <h4 style={{ marginBottom: '10px' }}>اختيار المقاس</h4>
+              <div style={{ marginTop: '24px' }}>
+                <h4 style={{ marginBottom: '12px', fontSize: '15px' }}>اختيار المقاس</h4>
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                   {currentVariant.sizes.map((size, index) => (
                     <button
@@ -244,10 +250,12 @@ toast("تمت إضافة المنتج للسلة 🛍️")
                       type="button"
                       onClick={() => setSelectedSize(size)}
                       style={{
-                        padding: '10px 16px',
-                        borderRadius: '999px',
+                        padding: '10px 20px',
+                        borderRadius: '12px',
                         border: selectedSize === size ? '2px solid #7a5c46' : '1px solid #ddd',
                         background: selectedSize === size ? '#f3ebe5' : '#fff',
+                        color: selectedSize === size ? '#7a5c46' : '#333',
+                        fontWeight: selectedSize === size ? 'bold' : 'normal',
                         cursor: 'pointer',
                       }}
                     >
@@ -260,8 +268,8 @@ toast("تمت إضافة المنتج للسلة 🛍️")
           </>
         )}
 
-        <div style={{ marginTop: '22px' }}>
-          <button className="primary-btn" onClick={handleAddToCart}>
+        <div style={{ marginTop: '30px' }}>
+          <button className="primary-btn" onClick={handleAddToCart} style={{ width: '100%' }}>
             أضيفي إلى السلة
           </button>
         </div>

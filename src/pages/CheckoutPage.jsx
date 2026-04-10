@@ -6,11 +6,13 @@ import { useCart } from '../context/CartContext'
 import { cities } from '../data/cities'
 import { db } from '../firebase'
 import { formatPrice } from '../utils/format'
-import {toast,errorAlert} from '../utils/alerts'
+import { toast, errorAlert } from '../utils/alerts'
+
 const initialForm = {
   customerName: '',
   phone: '',
   cityId: '',
+  customCity: '', // الحقل الجديد للمدينة اليدوية
   address: '',
   notes: '',
 }
@@ -34,13 +36,18 @@ export default function CheckoutPage() {
 
     if (!cartItems.length) return
 
+    // التأكد من أن الكليان كتب سميت المدينة يلا اختار "باقي المدن"
+    if (selectedCity?.name_ar === 'مدينة أخرى' && !form.customCity.trim()) {
+      errorAlert('يرجى كتابة اسم مدينتك')
+      return
+    }
+
     try {
       setSending(true)
 
       await runTransaction(db, async (transaction) => {
         const preparedProducts = []
 
-        // 1) نقراو كاملين أولاً
         for (const item of cartItems) {
           const productRef = doc(db, 'products', item.id)
           const productSnap = await transaction.get(productRef)
@@ -108,18 +115,21 @@ export default function CheckoutPage() {
           }
         }
 
-        // 2) من بعد نبداو الكتابات كاملين
         for (const prepared of preparedProducts) {
           transaction.update(prepared.ref, prepared.data)
         }
 
         const orderRef = doc(collection(db, 'orders'))
 
+        const finalCityName = selectedCity?.name_ar === 'مدينة أخرى' 
+          ? ` مدينة أخرى (${form.customCity})` 
+          : (selectedCity?.name_ar || 'مدينة أخرى')
+
         transaction.set(orderRef, {
           customerName: form.customerName,
           phone: form.phone,
           cityId: Number(form.cityId),
-          cityName: selectedCity?.name_ar || '',
+          cityName: finalCityName, 
           address: form.address,
           notes: form.notes || '',
           items: cartItems.map((item) => ({
@@ -196,6 +206,17 @@ export default function CheckoutPage() {
             </option>
           ))}
         </select>
+
+        {selectedCity?.name_ar === 'مدينة أخرى' && (
+          <input
+            type="text"
+            placeholder="اكتبي اسم مدينتك هنا"
+            value={form.customCity}
+            onChange={(e) => setForm({ ...form, customCity: e.target.value })}
+            style={{ marginTop: '-10px', borderColor: 'var(--primary-color)' }}
+            required
+          />
+        )}
 
         <textarea
           placeholder="العنوان الكامل"

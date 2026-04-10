@@ -22,7 +22,7 @@ import { HiOutlineShoppingBag } from 'react-icons/hi2'
 
 import { useCart } from '../context/CartContext'
 const emptyVariant = {
-  color: '',
+  // حيدنا color من هنا
   imageUrl: '',
   stock: '',
   sizes: '',
@@ -138,9 +138,8 @@ export default function AdminDashboard() {
 
       if (usesVariants) {
         const cleanedVariants = variants
-          .filter((variant) => variant.imageUrl.trim() || variant.color.trim())
+          .filter((variant) => variant.imageUrl.trim()) // الفلترة بقات فقط بالصورة
           .map((variant) => ({
-            color: variant.color.trim(),
             imageUrl: variant.imageUrl.trim(),
             stock: Number(variant.stock || 0),
             sizes: variant.sizes
@@ -199,7 +198,6 @@ export default function AdminDashboard() {
     ) {
       setVariants(
         product.variants.map((variant) => ({
-          color: variant.color || '',
           imageUrl: variant.imageUrl || '',
           stock: variant.stock || '',
           sizes: Array.isArray(variant.sizes) ? variant.sizes.join(', ') : '',
@@ -307,24 +305,36 @@ export default function AdminDashboard() {
       </header>
     <div className="admin-page">
       <div className="admin-topbar">
-        <h1>لوحة إدارة إرتديه</h1>
-        <button className="secondary-btn" onClick={logout}>تسجيل الخروج</button>
-      </div>
+  <h1>لوحة إدارة إرتديه</h1>
+  <div style={{ display: 'flex', gap: '10px' }}>
+    <button 
+      className="primary-btn" 
+      onClick={() => document.querySelector('.orders-panel').scrollIntoView({ behavior: 'smooth' })}
+      style={{ background: '#222' }}
+    >
+      عرض الطلبيات ({stats.orders})
+    </button>
+    <button className="secondary-btn" onClick={logout}>تسجيل الخروج</button>
+  </div>
+</div>
 
-      <div className="admin-stats">
-        <div className="stat-card">
-          <span>المنتجات</span>
-          <strong>{stats.products}</strong>
-        </div>
-        <div className="stat-card">
-          <span>الطلبيات</span>
-          <strong>{stats.orders}</strong>
-        </div>
-        <div className="stat-card">
-          <span>الطلبات الجديدة</span>
-          <strong>{stats.pending}</strong>
-        </div>
-      </div>
+<div className="admin-stats">
+  <div className="stat-card" onClick={() => window.scrollTo({ top: document.querySelector('.admin-grid').offsetTop - 100, behavior: 'smooth' })} style={{ cursor: 'pointer' }}>
+    <span>المنتجات</span>
+    <strong>{stats.products}</strong>
+  </div>
+  
+  <div className="stat-card" onClick={() => window.scrollTo({ top: document.querySelector('.orders-panel').offsetTop - 20, behavior: 'smooth' })} style={{ cursor: 'pointer', border: '2px solid var(--primary-color)' }}>
+    <span>الطلبيات</span>
+    <strong>{stats.orders}</strong>
+    <small style={{ display: 'block', fontSize: '12px', color: 'var(--primary-color)' }}>اضغط للمشاهدة ↓</small>
+  </div>
+
+  <div className="stat-card">
+    <span>الطلبيات الجديدة</span>
+    <strong>{stats.pending}</strong>
+  </div>
+</div>
 
       <div className="admin-grid">
         <section className="admin-panel">
@@ -368,7 +378,7 @@ export default function AdminDashboard() {
             {usesVariants ? (
               <>
                 <div className="variants-head">
-                  <h3>الألوان / الصور / المقاسات / المخزون</h3>
+                  <h3>الصور / المقاسات / المخزون</h3>
                 </div>
 
                 {variants.map((variant, index) => (
@@ -383,18 +393,14 @@ export default function AdminDashboard() {
                       background: '#fff',
                     }}
                   >
-                    <input
-                      type="text"
-                      value={variant.color}
-                      onChange={(e) => updateVariantField(index, 'color', e.target.value)}
-                      placeholder="اسم اللون"
-                    />
+                    {/* حيدنا input ديال "اسم اللون" من هنا */}
 
                     <input
                       type="url"
                       value={variant.imageUrl}
                       onChange={(e) => updateVariantField(index, 'imageUrl', e.target.value)}
                       placeholder="رابط الصورة من Cloudinary"
+                      required
                     />
 
                     <input
@@ -402,6 +408,7 @@ export default function AdminDashboard() {
                       value={variant.stock}
                       onChange={(e) => updateVariantField(index, 'stock', e.target.value)}
                       placeholder="المخزون الخاص بهذا اللون"
+                      required
                     />
 
                     <input
@@ -414,7 +421,7 @@ export default function AdminDashboard() {
                     {variant.imageUrl && (
                       <img
                         src={variant.imageUrl}
-                        alt={variant.color || 'preview'}
+                        alt="preview"
                         className="preview-image"
                       />
                     )}
@@ -437,7 +444,7 @@ export default function AdminDashboard() {
                   className="secondary-btn"
                   onClick={addVariant}
                 >
-                  + إضافة لون جديد
+                  + إضافة صورة لون جديد
                 </button>
               </>
             ) : (
@@ -503,14 +510,14 @@ export default function AdminDashboard() {
                   {(product.category === 'abayas' || product.category === 'hijabs') &&
                     Array.isArray(product.variants) &&
                     product.variants.length > 0 && (
-                      <div style={{ marginTop: '8px' }}>
+                      <div style={{ marginTop: '8px', display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
                         {product.variants.map((variant, index) => (
-                          <p key={index} style={{ fontSize: '14px', margin: '4px 0' }}>
-                            {variant.color || `لون ${index + 1}`} — مخزون: {variant.stock || 0}
-                            {Array.isArray(variant.sizes) && variant.sizes.length > 0
-                              ? ` — المقاسات: ${variant.sizes.join(', ')}`
-                              : ''}
-                          </p>
+                          <img 
+                            key={index}
+                            src={variant.imageUrl} 
+                            alt="variant" 
+                            style={{ width: '30px', height: '30px', borderRadius: '4px', objectFit: 'cover' }}
+                          />
                         ))}
                       </div>
                     )}
@@ -553,13 +560,24 @@ export default function AdminDashboard() {
 
               <div className="order-items">
                 {order.items?.map((item, index) => (
-                  <div key={index} className="summary-line">
-                    <span>
-                      {item.name} × {item.quantity}
-                      {item.color ? ` — ${item.color}` : ''}
-                      {item.size ? ` — ${item.size}` : ''}
-                    </span>
-                    <strong>{formatPrice(item.price * item.quantity)}</strong>
+                  <div key={index} className="summary-line" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {item.imageUrl && (
+                      <img 
+                        src={item.imageUrl} 
+                        alt={item.name} 
+                        style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '8px' }} 
+                      />
+                    )}
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>
+                          {item.name} × {item.quantity}
+                          {/* حيدنا عرض اسم اللون هنا */}
+                          {item.size ? ` — ${item.size}` : ''}
+                        </span>
+                        <strong>{formatPrice(item.price * item.quantity)}</strong>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
