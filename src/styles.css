@@ -1153,3 +1153,11 @@ button {
   flex-wrap: nowrap; /* مهم */
   overflow-x: auto;  /* باش يبان scroll إلا تزاحمو */
 }
+
+.footer-bottom {
+  white-space: nowrap; /* كتمنع السطر يتقسم على جوج */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px; /* كتحكم فالمسافة بين © والاسم والحقوق */
+}

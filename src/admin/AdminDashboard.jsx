@@ -16,7 +16,11 @@ import { useNavigate } from 'react-router-dom'
 import { auth, db } from '../firebase'
 import { categories } from '../data/cities'
 import { categoryLabel, formatPrice, getStatusLabel } from '../utils/format'
+import { Link } from 'react-router-dom' 
 
+import { HiOutlineShoppingBag } from 'react-icons/hi2'
+
+import { useCart } from '../context/CartContext'
 const emptyVariant = {
   color: '',
   imageUrl: '',
@@ -42,7 +46,7 @@ export default function AdminDashboard() {
   const [editingId, setEditingId] = useState(null)
   const [saving, setSaving] = useState(false)
   const navigate = useNavigate()
-
+  const { totalItems } = useCart()
   const usesVariants = form.category === 'abayas' || form.category === 'hijabs'
 
   useEffect(() => {
@@ -281,6 +285,26 @@ export default function AdminDashboard() {
   if (!userReady) return null
 
   return (
+    
+    <>
+    <header className="header">
+        <div className="container header-inner">
+          <div className="header-top">
+            <Link to="/" className="brand">
+              <img src="/logo-ertadih.jpeg" alt="إرتديه" className="brand-logo" />
+              <div>
+                <h1>إرتديه</h1>
+                <p>بأناقة و حشمة</p>
+              </div>
+            </Link>
+            
+           <Link to="/cart" className="cart-icon-link">
+  <HiOutlineShoppingBag />
+  {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
+</Link>
+          </div>
+        </div>
+      </header>
     <div className="admin-page">
       <div className="admin-topbar">
         <h1>لوحة إدارة إرتديه</h1>
@@ -561,5 +585,6 @@ export default function AdminDashboard() {
         </div>
       </section>
     </div>
+    </>
   )
 }
