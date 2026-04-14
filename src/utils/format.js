@@ -12,7 +12,7 @@ export const getStatusLabel = (status) => {
 export const categoryLabel = (category) => {
   const labels = {
     hijabs: 'الحجابات',
-    perfumes: 'العطور و الأمساك',
+    produits: 'المنتجات',
     abayas: 'العباءات',
   }
   return labels[category] || category

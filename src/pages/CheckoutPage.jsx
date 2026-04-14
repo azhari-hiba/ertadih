@@ -12,7 +12,7 @@ const initialForm = {
   customerName: '',
   phone: '',
   cityId: '',
-  customCity: '', // الحقل الجديد للمدينة اليدوية
+  customCity: '', 
   address: '',
   notes: '',
 }
@@ -36,7 +36,6 @@ export default function CheckoutPage() {
 
     if (!cartItems.length) return
 
-    // التأكد من أن الكليان كتب سميت المدينة يلا اختار "باقي المدن"
     if (selectedCity?.name_ar === 'مدينة أخرى' && !form.customCity.trim()) {
       errorAlert('يرجى كتابة اسم مدينتك')
       return

@@ -82,7 +82,6 @@ export default function ProductDetails() {
       addToCart({
         ...product,
         imageUrl: currentVariant.imageUrl,
-        // حيدنا اللون من هنا باش ما يمشيش للسلة كاسم
         size: selectedSize || '',
         variantIndex: currentIndex,
       })
@@ -184,7 +183,6 @@ export default function ProductDetails() {
               </button>
             </div>
 
-            {/* عرض الصور الصغيرة للألوان فقط بدون كتابة الاسم */}
             <div
               className="variant-thumbs"
               style={{
@@ -238,7 +236,6 @@ export default function ProductDetails() {
 
         {usesVariants && currentVariant && (
           <>
-            {/* حيدنا قسم "اختيار اللون" اللي كان كيعرض أزرار فيها نص، دابا الصور الصغيرة الفوق كافية */}
             
             {Array.isArray(currentVariant.sizes) && currentVariant.sizes.length > 0 && (
               <div style={{ marginTop: '24px' }}>
