@@ -17,6 +17,6 @@ export const cities = [
 
 export const categories = [
   { id: 'hijabs', label: 'الحجابات' },
-  { id: 'perfumes', label: 'العطور و الأمساك' },
+  { id: 'produits', label: ' المنتجات' },
   { id: 'abayas', label: 'العباءات' },
 ]
